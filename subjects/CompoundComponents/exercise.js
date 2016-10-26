@@ -37,20 +37,52 @@ class RadioGroup extends React.Component {
     defaultValue: PropTypes.string
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: this.props.defaultValue
+    }
+  }
+
+  select(value) {
+    this.setState({ value }, () => {
+      this.props.onChange(this.state.value)
+    })
+  }
+
   render() {
-    return <div>{this.props.children}</div>
+    // React.Children will create an array, even if it only has 1 item.
+    const children = React.Children.map(this.props.children, (child) => {
+      return React.cloneElement(child, {
+        isSelected: child.props.value === this.state.value,
+        onClick: () => this.select(child.props.value)
+      })
+    })
+    return <div>{children}</div>
   }
 }
 
 class RadioOption extends React.Component {
   static propTypes = {
-    value: PropTypes.string
+    defaultValue: PropTypes.string,
+    onClick: PropTypes.func
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: this.props.defaultValue
+    }
+  }
+
+  handleClick = () => {
+    this.props.onClick();
   }
 
   render() {
     return (
-      <div>
-        <RadioIcon isSelected={false}/> {this.props.children}
+      <div onClick={this.handleClick}>
+        <RadioIcon isSelected={this.props.isSelected}  /> {this.props.children}
       </div>
     )
   }
@@ -80,12 +112,20 @@ class RadioIcon extends React.Component {
 }
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      radioValue: 'fm'
+    }
+  }
+
   render() {
+    const { radioValue } = this.state
     return (
       <div>
-        <h1>♬ It's about time that we all turned off the radio ♫</h1>
-
-        <RadioGroup defaultValue="fm">
+        <h1>♬ Its about time that we all turned off the radio ♫</h1>
+        <h2> radio value: {this.state.radioValue} </h2>
+        <RadioGroup defaultValue={this.state.radioValue} onChange={(radioValue) => this.setState({radioValue})}>
           <RadioOption value="am">AM</RadioOption>
           <RadioOption value="fm">FM</RadioOption>
           <RadioOption value="tape">Tape</RadioOption>
