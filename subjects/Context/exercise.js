@@ -21,24 +21,53 @@ import React from 'react'
 import { render } from 'react-dom'
 
 class Form extends React.Component {
+  static propTypes = {
+    handleSubmit: React.PropTypes.func
+  }
+
+  static childContextTypes = {
+    handleSubmit: React.PropTypes.func
+  }
+
+  getChildContext() {
+    return {
+      handleSubmit: this.props.onSubmit
+    }
+  }
+
   render() {
     return <div>{this.props.children}</div>
   }
 }
 
 class SubmitButton extends React.Component {
+  static contextTypes = {
+    handleSubmit: React.PropTypes.func
+  }
+
   render() {
-    return <button>{this.props.children}</button>
+    return <button onClick={ this.context.handleSubmit }>{this.props.children}</button>
   }
 }
 
 class TextInput extends React.Component {
+  static contextTypes = {
+    handleSubmit: React.PropTypes.func
+  }
+
+  checkIfEnter = (e) => {
+     if (e.key === 'Enter') {
+       this.context.handleSubmit();
+     }
+  }
+
   render() {
     return (
       <input
         type="text"
         name={this.props.name}
         placeholder={this.props.placeholder}
+        onKeyUp={this.checkIfEnter}
       />
     )
   }
@@ -46,7 +75,7 @@ class TextInput extends React.Component {
 
 class App extends React.Component {
   handleSubmit = () => {
-    alert('YOU WIN!')
+    alert('hit submit');
   }
 
   render() {
