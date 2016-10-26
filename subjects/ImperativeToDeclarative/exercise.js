@@ -12,7 +12,17 @@ import 'bootstrap-webpack'
 class Modal extends React.Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
-    children: PropTypes.node
+    children: PropTypes.node,
+    isOpen: PropTypes.bool
+  }
+
+
+  toggleVisibility = () => {
+    if( this.props.isOpen ) {
+      $(findDOMNode(this.refs.modal)).modal('show')
+    } else {
+      $(findDOMNode(this.refs.modal)).modal('hide')
+    }
   }
 
   render() {
@@ -34,12 +44,20 @@ class Modal extends React.Component {
 }
 
 class App extends React.Component {
+  state = {
+    isOpen: false
+  }
+
   openModal = () => {
-    $(findDOMNode(this.refs.modal)).modal('show')
+    this.setState({
+      isOpen: true
+    })
   }
 
   closeModal = () => {
-    $(findDOMNode(this.refs.modal)).modal('hide')
+    this.setState({
+      isOpen: false
+    })
   }
 
   render() {
@@ -52,7 +70,11 @@ class App extends React.Component {
           onClick={this.openModal}
         >open modal</button>
 
-        <Modal ref="modal" title="Declarative is better">
+        <Modal
+          isOpen={this.state.isOpen}
+          ref="modal"
+          title="Declarative is better"
+        >
           <p>Calling methods on instances is a FLOW not a STOCK!</p>
           <p>It’s the dynamic process, not the static program in text space.</p>
           <p>You have to experience it over time, rather than in snapshots of state.</p>
@@ -62,7 +84,6 @@ class App extends React.Component {
             className="btn btn-default"
           >Close</button>
         </Modal>
-
       </div>
     )
   }
