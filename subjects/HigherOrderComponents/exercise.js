@@ -42,10 +42,9 @@ class App extends React.Component {
     }).isRequired
   }
 
-
   render() {
     return (
-      <div>
+      <div style={{height: '100%'}}>
         <h1>With the mouse!</h1>
         <pre>{JSON.stringify(this.props.mouse, null, 2)}</pre>
       </div>
