@@ -22,16 +22,17 @@ import { render } from 'react-dom'
 import { listen } from './utils/log'
 
 class Tail extends React.Component {
-  render() {
-    const { lines } = this.props
+  static propTypes = {
+    lines: React.PropTypes.arrayOf(React.PropTypes.string),
+    n: React.PropTypes.number
+  }
 
-    return (
-      <ul>
-        {lines.map((line, index) => (
-          <li key={index}>{line}</li>
-        ))}
-      </ul>
-    )
+  static defaultProps = {
+    n: 2
+  }
+  render() {
+    const {children, lines, n} = this.props;
+    return children(lines.slice(-n))
   }
 }
 
@@ -53,7 +54,15 @@ class App extends React.Component {
       <div>
         <h1>Heads up Eggman, here comes <code>&lt;Tail&gt;</code>s!</h1>
         <div style={{ height: 400, overflowY: 'scroll', border: '1px solid' }}>
-          <Tail lines={this.state.lines}/>
+          <Tail lines={this.state.lines} n={2}>
+            {lines =>
+              <ul>
+                {lines.map((line, index) => (
+                  <li key={index}>{line}</li>
+                ))}
+              </ul>
+            }
+          </Tail>
         </div>
       </div>
     )
